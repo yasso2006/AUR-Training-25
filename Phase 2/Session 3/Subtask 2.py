@@ -9,24 +9,23 @@ out = img.copy()
 
 lower_red = np.array([0, 0, 200])
 upper_red = np.array([50, 50, 255])
-red = cv2.inRange(out, lower_red, upper_red)
+mask_red = np.all((out >= lower_red) & (out <= upper_red), axis=-1)
 
 lower_black = np.array([0, 0, 0])
 upper_black = np.array([80, 80, 80])
-black = cv2.inRange(out, lower_black, upper_black)
+mask_black = np.all((out >= lower_black) & (out <= upper_black), axis=-1)
 
 lower_blue = np.array([200, 0, 0])
 upper_blue = np.array([255, 50, 50])
-blue = cv2.inRange(out, lower_blue, upper_blue)
-
+mask_blue = np.all((out >= lower_blue) & (out <= upper_blue), axis=-1)
 # Take care that the default colorspace that OpenCV opens an image in is BGR not RGB
 
 # Change all pixels that fit within the blue mask to black
-out[blue > 0] = [0, 0, 0]
+out[mask_blue] = [0, 0, 0]
 # Change all pixels that fit within the red mask to blue
-out[red > 0] = [255, 0, 0]
+out[mask_red] = [255, 0, 0]
 # Change all pixels that fit within the black mask to red
-out[black > 0] = [0, 0, 255]
+out[mask_black] = [0, 0, 255]
 
 img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 out_rgb = cv2.cvtColor(out, cv2.COLOR_BGR2RGB)
